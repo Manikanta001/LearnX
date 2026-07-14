@@ -55,6 +55,13 @@ const executeCode = async (code, language, stdin = '') => {
       throw new Error(`Unsupported language: ${language}`);
     }
 
+    let apiHost = '';
+    try {
+      apiHost = new URL(apiUrl).hostname;
+    } catch (e) {
+      apiHost = 'judge0-ce.p.rapidapi.com'; // fallback
+    }
+
     // Create submission
     const { data: submission } = await axios.post(
       `${apiUrl}/submissions?base64_encoded=false&wait=true`,
@@ -67,7 +74,7 @@ const executeCode = async (code, language, stdin = '') => {
         headers: {
           'Content-Type': 'application/json',
           'X-RapidAPI-Key': apiKey,
-          'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com',
+          'X-RapidAPI-Host': apiHost,
         },
         timeout: JUDGE0_REQUEST_TIMEOUT_MS,
       }
